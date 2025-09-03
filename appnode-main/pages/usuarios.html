@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Listar Usuários</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="/"><i class="bi bi-house-door"></i> Início</a>
+    <a href="/cadastro"><i class="bi bi-person-plus"></i> Cadastrar</a>
+  </header>
+
+  <main class="container">
+    <h1>Usuários</h1>
+    <table class="table" id="usersTable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p id="emptyMsg">Carregando...</p>
+  </main>
+
+  <footer>
+    <div class="footer-images">
+      <img src="/public/img/flaticon1.png" alt="ic" />
+    </div>
+  </footer>
+
+  <script>
+    async function loadUsers() {
+      const res = await fetch('/data/usuarios.json');
+      const users = await res.json();
+      const tbody = document.querySelector("#usersTable tbody");
+      tbody.innerHTML = "";
+
+      if (!users.length) {
+        document.getElementById('emptyMsg').innerText = "Nenhum usuário cadastrado.";
+      } else {
+        document.getElementById('emptyMsg').innerText = "";
+      }
+
+      users.forEach(u => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${u.nome}</td>
+          <td>${u.email}</td>
+          <td>${u.tel || ''}</td>
+          <td>
+            <a href="/show?id=${u.id}" title="Mostrar"><i class="bi bi-eye"></i></a>
+            <a href="/editar?id=${u.id}" title="Editar"><i class="bi bi-pencil-square"></i></a>
+            <a href="/deleteUsuario?id=${u.id}" title="Excluir" onclick="return confirm('Excluir usuário?')"><i class="bi bi-trash"></i></a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
